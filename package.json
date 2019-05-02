@@ -4,12 +4,11 @@
   "description": "Produce universal library with webpack and es6",
   "main": "lib/webpack-library-starter.js",
   "scripts": {
-    "build": "webpack --env dev && webpack --env build && npm run test",
+    "build": "npm run lint && webpack --env dev && webpack --env build && npm run test",
     "dev": "webpack --progress --colors --watch --env dev",
-    "test": "mocha --require babel-register --colors ./test/*.spec.js",
-    "test:watch": "mocha --require babel-register --colors -w ./test/*.spec.js",
-    "test:cover": "cross-env NODE_ENV=test nyc mocha --require babel-register --colors test/*.js",
-    "repl": "node -i -e \"$(< ./lib/webpack-library-starter.js)\""
+    "test": "jest",
+    "lint": "eslint --ext .js src",
+    "lint-fix": "eslint --ext .js src --fix"
   },
   "repository": {
     "type": "git",
@@ -40,21 +39,57 @@
     "babel-plugin-istanbul": "^5.1.0",
     "babel-preset-env": "^7.0.0-beta.3",
     "babel-register": "^7.0.0-beta.3",
-    "chai": "^4.1.2",
     "cross-env": "^5.2.0",
     "eslint": "^5.0.1",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-friendly-formatter": "^3.0.0",
     "eslint-loader": "^2.0.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.4.0",
+    "eslint-plugin-standard": "^3.0.1",
+    "eslint-plugin-vue": "^4.0.0",
     "jsdom": "11.11.0",
     "jsdom-global": "3.0.2",
-    "mocha": "^4.0.1",
+    "lint-staged": "^7.0.0",
+    "nyc": "^13.1.0",
     "uglifyjs-webpack-plugin": "^1.2.7",
     "webpack": "^4.12.2",
     "webpack-cli": "^3.0.8",
     "yargs": "^10.0.3",
-    "nyc": "^13.1.0"
+    "yorkie": "^1.0.1",
+    "babel-jest": "^24.7.1",
+    "jest": "^24.7.1"
   },
   "nyc": {
     "sourceMap": false,
     "instrument": false
+  },
+  "gitHooks": {
+    "pre-commit": "lint-staged",
+    "commit-msg": "node scripts/verify-commit-msg.js"
+  },
+  "lint-staged": {
+    "*.{js}": [
+      "eslint --fix",
+      "git add"
+    ]
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json"
+    ],
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+    },
+    "transformIgnorePatterns": [
+      "/node_modules/(?!vue-awesome|normalize.css)"
+    ],
+    "collectCoverage": true,
+    "collectCoverageFrom": [
+      "**/*.{js}",
+      "!**/node_modules/**"
+    ]
   }
 }
